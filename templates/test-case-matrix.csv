@@ -1,6 +1,15 @@
 ID,Folder,Endpoint,Method,Scenario,Input file/body,Expected status,Expected response check,Type,Pass/Fail,Evidence
-TC01,Functional,/health,GET,Service is alive,-,200,status=ok,functional,,
-TC02,Functional,/readings,POST,Create reading happy path,mock-data/sensor-reading-valid.json,201,"has reading_id, accepted=true",functional,,
-TC03,Negative,/readings,POST,Missing device_id,mock-data/sensor-reading-invalid-missing-device.json,400,Problem Details,negative,,
-TC04,Auth,/readings,POST,Missing token,mock-data/sensor-reading-valid.json,401,Problem Details,auth,,
-TC05,Boundary,/readings,POST,High temperature boundary,mock-data/sensor-reading-boundary.json,201/400,documented behavior,boundary,,
+TC01,Functional,/health,GET,Service is alive,-,200,status=ok,functional,Pass,Newman Report
+TC02,Functional,/readings,POST,Create reading happy path,mock-data/sensor-reading-valid.json,201,"has reading_id, accepted=true",functional,Pass,Newman Report
+TC03,Functional,/readings/latest,GET,List latest readings,-,200,items array,functional,Pass,Newman Report
+TC04,Auth,/readings/latest,GET,Valid token is accepted,-,200,-,auth,Pass,Newman Report
+TC05,Auth,/readings,POST,Missing token,-,401/403,Problem Details,auth,Pass,Newman Report
+TC06,Auth,/readings,POST,Invalid token,-,401/403,Problem Details,auth,Pass,Newman Report
+TC07,Negative,/readings,POST,Missing device_id,mock-data/sensor-reading-invalid-missing-device.json,400/422,Problem Details,negative,Pass,Newman Report
+TC08,Negative,/readings,POST,Wrong enum value,-,400/422,Problem Details,negative,Pass,Newman Report
+TC09,Boundary,/readings,POST,High temperature boundary,mock-data/sensor-reading-boundary.json,201,accepted=true,boundary,Pass,Newman Report
+TC10,Boundary,/readings,POST,Out of range boundary,-,400/422,Problem Details,boundary,Pass,Newman Report
+TC11,Boundary,/readings/latest,GET,Limit above max,-,400/422,Problem Details,boundary,Pass,Newman Report
+TC12,Boundary,/readings,POST,Rate limit 429,-,429,Problem Details,boundary,Pass,Newman Report
+TC13,Consumer_side_Smoke,/detect,POST,Consumer can read detection fields,-,200,detection_id,consumer-side,Pass,Newman Report
+TC14,Local_only_NonFunctional,/readings,POST,Local response time threshold,-,200,responseTime < 1000,non-functional,Pass,Newman Report
